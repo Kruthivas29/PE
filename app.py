@@ -110,16 +110,18 @@ STEEL  = "#4A7DB5"
 PALE   = "#A8C4E0"
 COLORS = [NAVY, GOLD, STEEL, "#2ECC71", "#E74C3C", "#9B59B6", "#1ABC9C"]
 
-def light_template():
-    return dict(
-        layout=go.Layout(
-            font=dict(family="DM Sans", color="#1A2742"),
-            paper_bgcolor="white",
-            plot_bgcolor="#F7F9FC",
-            gridcolor="#E8EEF7",
-            title_font=dict(family="DM Serif Display", size=15, color=NAVY),
-        )
-    )
+LAYOUT_DEFAULTS = dict(
+    font=dict(family="DM Sans", color="#1A2742"),
+    paper_bgcolor="white",
+    plot_bgcolor="#F7F9FC",
+    title_font=dict(family="DM Serif Display", size=15, color=NAVY),
+    xaxis=dict(gridcolor="#E8EEF7", zerolinecolor="#E8EEF7"),
+    yaxis=dict(gridcolor="#E8EEF7", zerolinecolor="#E8EEF7"),
+)
+
+def apply_theme(fig):
+    fig.update_layout(**LAYOUT_DEFAULTS)
+    return fig
 
 # ── Load data ─────────────────────────────────────────────────────────────────
 @st.cache_data
@@ -215,12 +217,13 @@ with tab1:
             marker=dict(size=6),
         ))
     fig_line.update_layout(
-        template=light_template(), height=380,
+        height=380,
         title="Annual PE Deal Value by GCC Country (USD Millions)",
         legend=dict(orientation="h", y=-0.2),
         xaxis_title="Year", yaxis_title="Deal Value (USD M)",
         colorway=COLORS,
     )
+    apply_theme(fig_line)
     st.plotly_chart(fig_line, use_container_width=True)
 
     c1, c2 = st.columns(2)
@@ -234,8 +237,9 @@ with tab1:
             title="Total PE Deal Value 2015–2024 (USD M)",
             labels={"Total_USD_M": "Total (USD M)", "CAGR_Pct": "CAGR %"},
         )
-        fig_bar.update_layout(template=light_template(), height=320, coloraxis_showscale=True)
-        st.plotly_chart(fig_bar, use_container_width=True)
+        fig_bar.update_layout(height=320, coloraxis_showscale=True)
+        apply_theme(fig_bar)
+    st.plotly_chart(fig_bar, use_container_width=True)
 
     # Line — non-oil GDP growth
     with c2:
@@ -246,9 +250,10 @@ with tab1:
             labels={"NonOil_GDP_Growth_Pct": "Growth Rate (%)"},
             color_discrete_sequence=COLORS,
         )
-        fig_gdp.update_layout(template=light_template(), height=320,
+        fig_gdp.update_layout(height=320,
                               legend=dict(orientation="h", y=-0.3))
-        st.plotly_chart(fig_gdp, use_container_width=True)
+        apply_theme(fig_gdp)
+    st.plotly_chart(fig_gdp, use_container_width=True)
 
     # Pre vs Post reform comparison
     st.markdown('<div class="section-header">Pre vs Post-Reform Non-Oil GDP Growth (2015–19 vs 2020–24)</div>', unsafe_allow_html=True)
@@ -264,8 +269,9 @@ with tab1:
         labels={"Avg_Growth": "Avg Growth Rate (%)"},
         title="Average Non-Oil GDP Growth: Pre vs Post Vision 2030 / UAE Reform Era",
     )
-    fig_reform.update_layout(template=light_template(), height=340,
+    fig_reform.update_layout(height=340,
                               legend=dict(orientation="h", y=-0.2))
+    apply_theme(fig_reform)
     st.plotly_chart(fig_reform, use_container_width=True)
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -286,8 +292,9 @@ with tab2:
             labels={"AUM_USD_M": "AUM USD M (log)", "NonOil_Deal_Share_Pct": "Non-Oil Deal Share (%)"},
             color_discrete_sequence=COLORS,
         )
-        fig_bubble.update_layout(template=light_template(), height=380)
-        st.plotly_chart(fig_bubble, use_container_width=True)
+        fig_bubble.update_layout(height=380)
+        apply_theme(fig_bubble)
+    st.plotly_chart(fig_bubble, use_container_width=True)
 
     with c2:
         # Firm type comparison
@@ -300,8 +307,9 @@ with tab2:
             labels={"Mean_NonOil_Deal_Share_Pct": "Non-Oil Deal Share (%)",
                     "Mean_NonOil_GDP_Contrib_USD_M": "GDP Contrib (USD M)"},
         )
-        fig_type.update_layout(template=light_template(), height=380)
-        st.plotly_chart(fig_type, use_container_width=True)
+        fig_type.update_layout(height=380)
+        apply_theme(fig_type)
+    st.plotly_chart(fig_type, use_container_width=True)
 
     c3, c4 = st.columns(2)
 
@@ -319,8 +327,9 @@ with tab2:
             color_discrete_sequence=COLORS,
         )
         fig_ctry.update_traces(textposition="top center")
-        fig_ctry.update_layout(template=light_template(), height=340, showlegend=False)
-        st.plotly_chart(fig_ctry, use_container_width=True)
+        fig_ctry.update_layout(height=340, showlegend=False)
+        apply_theme(fig_ctry)
+    st.plotly_chart(fig_ctry, use_container_width=True)
 
     with c4:
         # Policy reform score vs sectoral focus
@@ -333,8 +342,9 @@ with tab2:
                     "Sectoral_Focus_Score":"Sectoral Focus Score (IV5)"},
             color_discrete_sequence=COLORS,
         )
-        fig_pf.update_layout(template=light_template(), height=340)
-        st.plotly_chart(fig_pf, use_container_width=True)
+        fig_pf.update_layout(height=340)
+        apply_theme(fig_pf)
+    st.plotly_chart(fig_pf, use_container_width=True)
 
     # DIFC vs Non-DIFC
     st.markdown('<div class="section-header">DIFC/ADGM Domicile Impact (H2)</div>', unsafe_allow_html=True)
@@ -351,7 +361,7 @@ with tab2:
                        color="Domicile", color_discrete_map={"DIFC/ADGM":NAVY,"Non-DIFC":PALE},
                        title=label, text=metric)
         fig_d.update_traces(texttemplate='%{text:.1f}', textposition='outside')
-        fig_d.update_layout(template=light_template(), height=300, showlegend=False)
+        fig_d.update_layout(height=300, showlegend=False)
         col.plotly_chart(fig_d, use_container_width=True)
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -400,12 +410,13 @@ with tab3:
             textposition="outside",
         ))
         fig_coef.update_layout(
-            template=light_template(), height=360,
+            height=360,
             title="Model 1: Coefficients — DV1 Non-Oil GDP Contribution (log)",
             yaxis_title="Coefficient", xaxis_title="",
         )
         fig_coef.add_hline(y=0, line_dash="dash", line_color="gray", line_width=1)
-        st.plotly_chart(fig_coef, use_container_width=True)
+        apply_theme(fig_coef)
+    st.plotly_chart(fig_coef, use_container_width=True)
 
     with c2:
         # Coefficient chart — Model 2 (DV2)
@@ -419,12 +430,13 @@ with tab3:
             textposition="outside",
         ))
         fig_coef2.update_layout(
-            template=light_template(), height=360,
+            height=360,
             title="Model 2: Coefficients — DV2 Non-Oil Deal Share (%)",
             yaxis_title="Coefficient",
         )
         fig_coef2.add_hline(y=0, line_dash="dash", line_color="gray", line_width=1)
-        st.plotly_chart(fig_coef2, use_container_width=True)
+        apply_theme(fig_coef2)
+    st.plotly_chart(fig_coef2, use_container_width=True)
 
     # Model fit comparison
     st.markdown('<div class="section-header">Model Fit Statistics</div>', unsafe_allow_html=True)
@@ -450,7 +462,8 @@ with tab3:
         labels={"ln_AUM":"ln(AUM)","log_GDP":"log(Non-Oil GDP Contrib)"},
         color_discrete_sequence=COLORS,
     )
-    fig_h1.update_layout(template=light_template(), height=380)
+    fig_h1.update_layout(height=380)
+    apply_theme(fig_h1)
     st.plotly_chart(fig_h1, use_container_width=True)
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -471,8 +484,9 @@ with tab4:
         labels={"Allocation_Pct":"Allocation (%)"},
         color_discrete_sequence=COLORS,
     )
-    fig_area.update_layout(template=light_template(), height=400,
+    fig_area.update_layout(height=400,
                            legend=dict(orientation="h", y=-0.25))
+    apply_theme(fig_area)
     st.plotly_chart(fig_area, use_container_width=True)
 
     c1, c2 = st.columns(2)
@@ -485,8 +499,9 @@ with tab4:
             color_discrete_sequence=COLORS,
             hole=0.4,
         )
-        fig_pie15.update_layout(template=light_template(), height=340)
-        st.plotly_chart(fig_pie15, use_container_width=True)
+        fig_pie15.update_layout(height=340)
+        apply_theme(fig_pie15)
+    st.plotly_chart(fig_pie15, use_container_width=True)
 
     with c2:
         # 2024 pie
@@ -496,8 +511,9 @@ with tab4:
             color_discrete_sequence=COLORS,
             hole=0.4,
         )
-        fig_pie24.update_layout(template=light_template(), height=340)
-        st.plotly_chart(fig_pie24, use_container_width=True)
+        fig_pie24.update_layout(height=340)
+        apply_theme(fig_pie24)
+    st.plotly_chart(fig_pie24, use_container_width=True)
 
     # Highlight tech growth
     tech = sectors[sectors["Sector"] == "Technology / TMT / Fintech"].iloc[0]
