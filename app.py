@@ -533,16 +533,14 @@ with tab5:
     show_cols = ["Firm Name","HQ Country","Firm Type","Founded","AUM_USD_M",
                  "NonOil_GDP_Contrib_USD_M","NonOil_Deal_Share_Pct",
                  "Policy_Reform_Score","Sectoral_Focus_Score","Firm_Size_Category"]
-    st.dataframe(
-        df[show_cols].rename(columns={
-            "AUM_USD_M":"AUM (USD M)",
-            "NonOil_GDP_Contrib_USD_M":"Non-Oil GDP Contrib (USD M)",
-            "NonOil_Deal_Share_Pct":"Non-Oil Deal Share (%)",
-            "Policy_Reform_Score":"Policy Score",
-            "Sectoral_Focus_Score":"Sectoral Focus",
-        }).style.background_gradient(subset=["Non-Oil Deal Share (%)"], cmap="Blues"),
-        use_container_width=True, height=450,
-    )
+    renamed_df = df[show_cols].rename(columns={
+        "AUM_USD_M":"AUM (USD M)",
+        "NonOil_GDP_Contrib_USD_M":"Non-Oil GDP Contrib (USD M)",
+        "NonOil_Deal_Share_Pct":"Non-Oil Deal Share (%)",
+        "Policy_Reform_Score":"Policy Score",
+        "Sectoral_Focus_Score":"Sectoral Focus",
+    })
+    st.dataframe(renamed_df, use_container_width=True, height=450)
 
     st.markdown('<div class="section-header">Descriptive Statistics</div>', unsafe_allow_html=True)
     st.dataframe(desc.set_index("Variable"), use_container_width=True)
